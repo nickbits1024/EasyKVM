@@ -1,0 +1,239 @@
+<html>
+
+<head>
+    <title>KVM Configuration</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        td {
+
+            padding: 5px;
+        }
+
+        .hold {
+            background-color: #eee;
+        }
+
+        table.ports { 
+            border-top: 1px solid black;
+            border-left: 1px solid black;
+            border-spacing: 0px;
+        }
+
+        table.ports tr td {
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+    </style>
+</head>
+
+<body data-ng-app="kvm" data-ng-controller="ConfigController">
+    <fieldset style="float: right">
+        <legend>Clipboard</legend>
+        <button data-ng-click="import()">Import</button> <button data-ng-click="export()">Export</button>
+    </fieldset>
+
+    <h1>KVM Configuration</h1>
+
+    <div>
+        <h2>Ports</h2>
+        <table class="ports">
+            <tr>
+                <td></td>
+                <td>Input</td>
+                <td>LED</td>
+            </tr>
+            <tr>
+                <td>PC1</td>
+                <td>
+                    <select data-ng-model="config.pc1_vcp" data-ng-options="input.code as input.name for input in vcp_inputs">
+                        <option value="">Select...</option>
+                    </select>
+                </td>
+                <td>
+                    R <input type="number" min="0" max="255" data-ng-model="config.pc1_led_r" />
+                    G <input type="number" min="0" max="255" data-ng-model="config.pc1_led_g" />
+                    B <input type="number" min="0" max="255" data-ng-model="config.pc1_led_b" />
+                </td>
+            </tr>
+            <tr>
+                <td>PC2</td>
+                <td>
+                    <select data-ng-model="config.pc2_vcp" data-ng-options="input.code as input.name for input in vcp_inputs">
+                        <option value="">Select...</option>
+                    </select>
+                </td>
+                <td>
+                    R <input type="number" min="0" max="255" data-ng-model="config.pc2_led_r" />
+                    G <input type="number" min="0" max="255" data-ng-model="config.pc2_led_g" />
+                    B <input type="number" min="0" max="255" data-ng-model="config.pc2_led_b" />
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <h2>Home Assistant</h2>
+
+    <table>
+        <tr>
+            <td>URL</td>
+            <td><input data-ng-model="config.ha_url" type="text" size="100" /></td>
+        </tr>
+        <tr>
+            <td>Authorization Key</td>
+            <td><input data-ng-model="config.ha_auth" type="text" size="100" /></td>
+        </tr>
+    </table>
+
+    <h2>Buttons</h2>
+
+    <table>
+        <tr>
+            <td>Hold Delay</td>
+            <td><input type="number" min="0" data-ng-model="config.hold_delay" /></td>
+        </tr>
+    </table>
+
+    <table style="border-spacing: 0">
+        <tr>
+            <td>Button</td>
+            <td>Click Function</td>
+            <td>Click Options</td>
+            <td class="hold">Hold Function</td>
+            <td class="hold">Hold Options</td>
+        </tr>
+        <tr data-ng-repeat="(button_index, button) in [1, 2, 3, 4, 5]">
+            <td>#{{button}}</td>
+            <td>
+                <select data-ng-model="config.buttons[button_index].click.function">
+                    <option value=""></option>
+                    <option value="1">KVM Next Input</option>
+                    <option value="3">KVM Reset</option>
+                    <option value="2">Home Assistant Service</option>
+                </select>
+            </td>
+            <td>
+                <div data-ng-show="config.buttons[button_index].click.function == 2">
+                    <input type="text" data-ng-model="config.buttons[button_index].click.options.ha_service_name"
+                        placeholder="Service" />
+                    <input type="text" data-ng-model="config.buttons[button_index].click.options.ha_entity_id"
+                        placeholder="Entity" />
+                </div>
+            </td>
+            <td class="hold">
+                <select data-ng-model="config.buttons[button_index].hold.function">
+                    <option value=""></option>
+                    <option value="1">KVM Next Input</option>
+                    <option value="3">KVM Reset</option>
+                    <option value="2">Home Assistant Service</option>
+                </select>
+            </td>
+            <td class="hold">
+                <div data-ng-show="config.buttons[button_index].hold.function == 2">
+                    <input type="text" data-ng-model="config.buttons[button_index].hold.options.ha_service_name"
+                        placeholder="Service" />
+                    <input type="text" data-ng-model="config.buttons[button_index].hold.options.ha_entity_id"
+                        placeholder="Entity" />
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <button data-ng-click="save()">Save</button>
+
+    <script>
+        var NUM_BUTTONS = 5;
+
+        angular.module("kvm", [])
+            .controller("ConfigController", function ($scope, $http) {
+
+                $scope.vcp_inputs = [
+                    { code: 0x1, name: "Analog Video 1" },
+                    { code: 0x2, name: "Analog Video 2" },
+                    { code: 0x3, name: "DVI 1" },
+                    { code: 0x4, name: "DVI 2" },
+                    { code: 0x5, name: "Composite Video 1" },
+                    { code: 0x6, name: "Composite Video 2" },
+                    { code: 0x7, name: "S-video 1" },
+                    { code: 0x8, name: "S-video 2" },
+                    { code: 0x9, name: "Tuner 1" },
+                    { code: 0x0A, name: "Tuner 2" },
+                    { code: 0x0B, name: "Tuner 3" },
+                    { code: 0x0C, name: "Component Video 1" },
+                    { code: 0x0D, name: "Component Video 2" },
+                    { code: 0x0E, name: "Component Video 3" },
+                    { code: 0x0F, name: "DisplayPort 1" },
+                    { code: 0x10, name: "DisplayPort 2" },
+                    { code: 0x11, name: "HDMI 1" },
+                    { code: 0x12, name: "HDMI 2" }
+                ];
+
+                $http.get("api/config")
+                    .then(function (response) {
+                        console.log(response.data);
+
+                        if (response.status == 200) {
+                            $scope.config = response.data;
+                        }
+                    }).finally(function () {
+                        $scope.config = $scope.config || {};
+
+                        // $scope.long
+                        // $scope.config.ha_url = $scope.config.ha_url || "";
+                        // $scope.config.ha_auth = $scope.config.ha_auth || "";
+                        // $scope.config.buttons = $scope.config.buttons || [];
+
+                        // for (var i = 0; i < NUM_BUTTONS; i++) 
+                        // {
+                        //     $scope.config.buttons[i] = $scope.config.buttons[i] || {};
+                        //     $scope.config.buttons[i].function = $scope.config.buttons[i].function || 0;
+                        //     $scope.config.buttons[i].options = $scope.config.buttons[i].options || {};
+                        // }
+
+                        console.log($scope.config);
+                    });
+
+                $scope.save = function () {
+                    console.log($scope.config);
+                    $http.post("api/config", $scope.config)
+                        .then(function (response) {
+                            console.log(response.data);
+                            $scope.config = response.data;
+                        });
+                };
+
+                $scope.import = function() {
+                    navigator.clipboard.readText().then(function (json)
+                    {
+                        console.log(json);
+                        if (!json.startsWith("{"))
+                        {
+                            alert("Clipboard has invalid config!");
+                            return;
+                        }
+                        var config = JSON.parse(json);
+                        console.log("imported config");
+                        $scope.config = config;
+                        console.log($scope.config);
+                        $scope.$apply();
+                        alert("Config imported from clipboard");
+                    });
+                }
+
+                $scope.export = function() {
+                    console.log("exported config");
+                    console.log($scope.config);
+                    navigator.clipboard.writeText(JSON.stringify($scope.config)).then(function() 
+                    {
+                        alert("Config exported to clipboard");
+                    });
+                }
+            });
+
+    </script>
+</body>
+
+</html>
