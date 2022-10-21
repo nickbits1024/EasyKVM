@@ -10,8 +10,6 @@ void kvm_next_port();
 void kvm_set_port(int port);
 int kvm_get_port();
 void kvm_enable(bool enable);
-
-//extern uint16_t kvm_last_input;
 esp_err_t kvm_load_state();
 
 #endif

@@ -309,8 +309,7 @@ esp_err_t webserver_post_monitor(httpd_req_t* req)
     {
         ddc_set_vcp(VCP_POWER_FEATURE, 1);
         led_enable(true);
-        kvm_enable(true);
-        //usb_reset_end();
+        usb_enable2(true);
         
         webserver_monitor_on = true;
     }
@@ -318,8 +317,7 @@ esp_err_t webserver_post_monitor(httpd_req_t* req)
     {
         ddc_set_vcp(VCP_POWER_FEATURE, 5);
         led_enable(false);
-        kvm_enable(false);
-        //usb_reset_start();
+        usb_enable2(false);
 
         webserver_monitor_on = false;
     }

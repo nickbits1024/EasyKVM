@@ -58,6 +58,6 @@ typedef struct
 
 esp_err_t usb_preinit();
 esp_err_t usb_init();
-//void usb_reset();
+void usb_enable2(bool enable);
 
 #endif

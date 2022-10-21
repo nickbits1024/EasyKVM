@@ -67,3 +67,12 @@ esp_err_t led_set_rgb_color(uint8_t r, uint8_t g, uint8_t b)
 
     return ESP_OK;
 }
+
+esp_err_t led_get_rgb_color(uint8_t* r, uint8_t* g, uint8_t* b)
+{
+    *r = last_r;
+    *g = last_g;
+    *b = last_b;
+
+    return ESP_OK;
+}

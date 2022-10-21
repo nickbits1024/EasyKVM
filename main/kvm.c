@@ -28,8 +28,6 @@ void kvm_sync_port()
 
     ESP_ERROR_CHECK(led_set_rgb_color(255, 0, 0));
 
-    //usb_reset_start();
-
     kvm_enable(false);
 
     config_t* config = (config_t*)malloc(sizeof(config_t));
@@ -79,10 +77,7 @@ void kvm_sync_port()
 
     vTaskDelay(500 / portTICK_PERIOD_MS);
 
-    //usb_reset();
-
     ESP_ERROR_CHECK(led_set_rgb_color(r, g, b));
-    //usb_reset_end();
 }
 
 esp_err_t kvm_preinit()
@@ -104,8 +99,11 @@ esp_err_t kvm_preinit()
 
 void kvm_reset()
 {
+    usb_enable2(false);
     kvm_enable(false);
     //usb_reset();
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    usb_enable2(true);
     kvm_enable(true);
     kvm_sync_port();
 }
@@ -166,7 +164,7 @@ esp_err_t kvm_init()
 
     kvm_sync_port();
 
-    kvm_enable(true);
+    usb_enable2(true);
 
     return ESP_OK;
 }
