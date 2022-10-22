@@ -1,2 +1,3 @@
 build
 /pcb/fp-info-cache
+*.kicad_sch-bak
