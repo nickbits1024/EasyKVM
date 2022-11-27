@@ -55,12 +55,7 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [
-        "clearance|129475000|132400000|5c0f9995-ef57-49bb-b11e-3d0413512b94|a287da9a-3626-43a6-bb88-c2ab15d5e9ce",
-        "clearance|129600000|128475000|4e54d441-29ae-4a69-92e6-492672267626|c48dba15-1368-4d49-b4cb-1b96f466653f",
-        "clearance|133525000|128600000|1b1d8874-0945-4b24-ae72-af3f1de2a142|b3a4599e-b4ab-48d0-9293-def31919d850",
-        "clearance|133525000|132400000|5832b5bb-910b-4824-a9a2-d964ca061d5e|24966b20-6427-4cf2-bc0f-c252a888bd6e"
-      ],
+      "drc_exclusions": [],
       "meta": {
         "version": 2
       },
@@ -108,7 +103,7 @@
         "allow_blind_buried_vias": false,
         "allow_microvias": false,
         "max_error": 0.005,
-        "min_clearance": 0.1016,
+        "min_clearance": 0.09,
         "min_copper_edge_clearance": 0.19999999999999998,
         "min_hole_clearance": 0.254,
         "min_hole_to_hole": 0.254,
@@ -116,7 +111,7 @@
         "min_microvia_drill": 0.19999999999999998,
         "min_silk_clearance": 0.0,
         "min_through_hole_diameter": 0.19999999999999998,
-        "min_track_width": 0.1016,
+        "min_track_width": 0.09,
         "min_via_annular_width": 0.049999999999999996,
         "min_via_diameter": 0.39999999999999997,
         "solder_mask_clearance": 0.0,
@@ -125,8 +120,10 @@
       },
       "track_widths": [
         0.0,
+        0.2,
         0.25,
         0.3,
+        0.375,
         0.4,
         0.5,
         0.6
@@ -352,8 +349,12 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [],
-    "pinned_symbol_libs": []
+    "pinned_footprint_libs": [
+      "MyParts"
+    ],
+    "pinned_symbol_libs": [
+      "MyParts"
+    ]
   },
   "meta": {
     "filename": "EasyKVM.kicad_pro",
@@ -363,7 +364,7 @@
     "classes": [
       {
         "bus_width": 12.0,
-        "clearance": 0.2,
+        "clearance": 0.09,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
@@ -380,7 +381,7 @@
       },
       {
         "bus_width": 12.0,
-        "clearance": 0.2,
+        "clearance": 0.09,
         "diff_pair_gap": 0.1016,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.125984,
@@ -407,7 +408,7 @@
       },
       {
         "bus_width": 12.0,
-        "clearance": 0.2,
+        "clearance": 0.09,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
@@ -428,7 +429,7 @@
       },
       {
         "bus_width": 12.0,
-        "clearance": 0.2,
+        "clearance": 0.09,
         "diff_pair_gap": 0.1016,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.175006,
@@ -457,7 +458,7 @@
       },
       {
         "bus_width": 12.0,
-        "clearance": 0.2,
+        "clearance": 0.09,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,

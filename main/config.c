@@ -162,7 +162,7 @@ esp_err_t config_deserialize(const char* json, config_t* config)
     cJSON* pc2_led_r = cJSON_GetObjectItemCaseSensitive(doc, "pc2_led_r");
     if (pc2_led_r != NULL)
     {
-        config->pc1_led_r = config_get_number(pc1_led_r);
+        config->pc2_led_r = config_get_number(pc2_led_r);
     }
     cJSON* pc2_led_g = cJSON_GetObjectItemCaseSensitive(doc, "pc2_led_g");
     if (pc2_led_g != NULL)

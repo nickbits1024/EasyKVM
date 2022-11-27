@@ -38,6 +38,8 @@ void kvm_sync_port()
 
     ESP_ERROR_CHECK(config_get(config));
 
+    ESP_LOGI(TAG, "sync port %d", kvm_port);
+
     uint8_t r = 0, g = 0, b = 0;
 
     switch (kvm_port)
@@ -45,16 +47,16 @@ void kvm_sync_port()
     case 0:
         ESP_ERROR_CHECK(gpio_set_level(KVM_PORT_GPIO_NUM, 0));
         input = config->pc1_vcp;
-        r = config->pc2_led_r;
-        g = config->pc2_led_g;
-        b = config->pc2_led_b;
+        r = config->pc1_led_r;
+        g = config->pc1_led_g;
+        b = config->pc1_led_b;
         break;
     case 1:
         ESP_ERROR_CHECK(gpio_set_level(KVM_PORT_GPIO_NUM, 1));
         input = config->pc2_vcp;
-        r = config->pc1_led_r;
-        g = config->pc1_led_g;
-        b = config->pc1_led_b;
+        r = config->pc2_led_r;
+        g = config->pc2_led_g;
+        b = config->pc2_led_b;
         break;
     default:
         abort();
@@ -181,13 +183,16 @@ void kvm_next_port()
 
 void kvm_set_port(int port)
 {
-    kvm_port = port == 2 ? 0 : 1;
-    kvm_sync_port();
+    if (port >= 1 && port <= KVM_NUM_PORTS)
+    {
+        kvm_port = port - 1;
+        kvm_sync_port();
+    }
 }
 
 int kvm_get_port()
 {
-    return kvm_port == 0 ? 2 : 1;
+    return kvm_port + 1;
 }
 
 void kvm_enable(bool enable)

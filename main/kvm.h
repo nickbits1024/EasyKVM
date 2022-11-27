@@ -7,6 +7,7 @@ esp_err_t kvm_init();
 esp_err_t kvm_preinit();
 void kvm_reset();
 void kvm_next_port();
+void kvm_sync_port();
 void kvm_set_port(int port);
 int kvm_get_port();
 void kvm_enable(bool enable);

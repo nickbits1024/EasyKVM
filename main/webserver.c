@@ -207,6 +207,8 @@ esp_err_t webserver_post_api_config(httpd_req_t* req)
         return ESP_OK;
     }
 
+    kvm_sync_port();
+
     return webserver_get_api_config(req);
 }
 
@@ -310,6 +312,7 @@ esp_err_t webserver_post_monitor(httpd_req_t* req)
         ddc_set_vcp(VCP_POWER_FEATURE, 1);
         led_enable(true);
         usb_enable2(true);
+        kvm_enable(true);
         
         webserver_monitor_on = true;
     }
@@ -318,6 +321,7 @@ esp_err_t webserver_post_monitor(httpd_req_t* req)
         ddc_set_vcp(VCP_POWER_FEATURE, 5);
         led_enable(false);
         usb_enable2(false);
+        kvm_enable(false);
 
         webserver_monitor_on = false;
     }
