@@ -21,6 +21,26 @@
 static int8_t kvm_port;
 static nvs_handle_t kvm_nvs_handle;
 static kvm_state_t kvm_state;
+static esp_timer_handle_t check_timer_handle;
+
+static void check_timer_callback(void* arg)
+{
+    uint16_t input;
+    if (ddc_get_vcp(VCP_INPUT_SOURCE_FEATURE, &input) == ESP_OK)
+    {
+        ESP_LOGI(TAG, "requested input source = %d, current = %d", kvm_state.last_input, input);
+        if (input != kvm_state.last_input)
+        {
+            ESP_LOGE(TAG, "input switch failed, retrying...");
+            kvm_sync_port();
+        }
+    }
+    else
+    {
+        ESP_LOGE(TAG, "unable to get current input source");
+        kvm_sync_port();
+    }
+}
 
 void kvm_sync_port()
 {
@@ -68,6 +88,7 @@ void kvm_sync_port()
     if (input != 0)
     {
         ddc_set_vcp(VCP_INPUT_SOURCE_FEATURE, input);
+        esp_timer_start_once(check_timer_handle, 5000000);
     }
 
     if (kvm_state.last_input != input)
@@ -163,6 +184,15 @@ esp_err_t kvm_init()
     }
 
     free(config);
+
+    const esp_timer_create_args_t check_timer = {
+            .callback = &check_timer_callback,
+            .arg = NULL,
+            .name = "vcp_check_timer"
+    };    
+
+    ESP_RETURN_ON_ERROR(esp_timer_create(&check_timer, &check_timer_handle),
+        TAG, "esp_timer_create failed(%s)", esp_err_to_name(err_rc_));
 
     kvm_sync_port();
 
