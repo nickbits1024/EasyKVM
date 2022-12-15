@@ -15,6 +15,7 @@
 #include "led.h"
 #include "webserver.h"
 #include "config.h"
+#include "health.h"
 
 void app_main(void)
 {

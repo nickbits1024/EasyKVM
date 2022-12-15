@@ -1,7 +1,7 @@
 
-#define WIFI_NVS_NAME          "wifi"
-#define WIFI_SSID_NVS_KEY      "ssid"
-#define WIFI_PASSWORD_NVS_KEY  "pw"
+#define WIFI_NVS_NAME           "wifi"
+#define WIFI_SSID_NVS_KEY       "ssid"
+#define WIFI_PASSWORD_NVS_KEY   "pw"
 
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT BIT1

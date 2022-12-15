@@ -2,12 +2,15 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
+#include "lwip/inet.h"
+#include "ping/ping_sock.h"
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "esp_log.h"
 #include "esp_check.h"
 #include "esp_netif.h"
 #include "nvs_flash.h"
+#include "health.h"
 #include "wifi_int.h"
 #include "wifi.h"
 
@@ -46,8 +49,6 @@ esp_err_t wifi_init()
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-
-    //wifi_connect();
 
     xTaskCreate(wifi_task, "wifi", 4096, NULL, 1, NULL);
 
@@ -168,6 +169,7 @@ esp_err_t wifi_connect()
     {
         ESP_LOGE(TAG, "failed to connect to SSID: %s, password: ********", wifi_ssid);
     }
+    ESP_ERROR_CHECK(health_start());
 cleanup:
     ESP_ERROR_CHECK(esp_event_handler_instance_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, instance_got_ip));
     ESP_ERROR_CHECK(esp_event_handler_instance_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, instance_any_id));
@@ -199,6 +201,7 @@ static void wifi_task(void* param)
 
 static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data)
 {
+    ESP_LOGI(TAG, "event (%s).%d", event_base, event_id);
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
     {
         esp_wifi_connect();

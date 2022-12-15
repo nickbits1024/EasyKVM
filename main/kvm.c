@@ -25,20 +25,32 @@ static esp_timer_handle_t check_timer_handle;
 
 static void check_timer_callback(void* arg)
 {
+    static int retry_num;
     uint16_t input;
     if (ddc_get_vcp(VCP_INPUT_SOURCE_FEATURE, &input) == ESP_OK)
     {
         ESP_LOGI(TAG, "requested input source = %d, current = %d", kvm_state.last_input, input);
         if (input != kvm_state.last_input)
         {
+            retry_num++;
             ESP_LOGE(TAG, "input switch failed, retrying...");
             kvm_sync_port();
+        }
+        else
+        {
+            retry_num = 0;
         }
     }
     else
     {
         ESP_LOGE(TAG, "unable to get current input source");
         kvm_sync_port();
+        retry_num++;
+    }
+
+    if (retry_num == KVM_MAX_SYNC_RETRIES)
+    {
+        esp_restart();
     }
 }
 
@@ -145,7 +157,7 @@ esp_err_t kvm_load_state()
     return ESP_FAIL;
 }
 
-esp_err_t kvm_save_state()
+static esp_err_t kvm_save_state()
 {
     ESP_ERROR_CHECK(nvs_set_blob(kvm_nvs_handle, KVM_STATE_KEY, &kvm_state, sizeof(kvm_state_t)));
     ESP_ERROR_CHECK(nvs_commit(kvm_nvs_handle));
