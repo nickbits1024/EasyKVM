@@ -25,11 +25,11 @@ static void health_timer_callback(void* arg)
     int replies = health_ping_replies;
     portEXIT_CRITICAL(&health_mux);
 
-    ESP_LOGI(TAG, "check last=%d now=%d", last_ping_replies, replies);
+    ESP_LOGI(TAG, "Ping check: last=%d now=%d", last_ping_replies, replies);
 
     if (last_ping_replies == replies)
     {
-        ESP_LOGE(TAG, "pings quit responding, restarting...");
+        ESP_LOGE(TAG, "Ping quit responding, restarting...");
         esp_restart();
     }
 
@@ -57,9 +57,7 @@ esp_err_t health_start()
     }
 
     health_ping_timeouts = 0;
-    portENTER_CRITICAL(&health_mux);
     health_ping_replies = 0;
-    portEXIT_CRITICAL(&health_mux);
 
     ip_addr_t target_addr = IPADDR4_INIT(0x08080808);  // google dns
 
@@ -88,7 +86,7 @@ esp_err_t health_start()
     ESP_RETURN_ON_ERROR(esp_timer_create(&check_timer, &health_timer_handle),
         TAG, "esp_timer_create failed(%s)", esp_err_to_name(err_rc_));
 
-    ESP_RETURN_ON_ERROR(esp_timer_start_periodic(health_timer_handle, HEALTH_PING_INTERVAL * 1000),
+    ESP_RETURN_ON_ERROR(esp_timer_start_periodic(health_timer_handle, HEALTH_PING_INTERVAL * 2 * 1000),
         TAG, "esp_timer_start_periodic failed(%s)", esp_err_to_name(err_rc_));
 
     return ESP_OK;
@@ -96,16 +94,13 @@ esp_err_t health_start()
 
 static void health_ping_success(esp_ping_handle_t hdl, void *args)
 {
-    health_ping_timeouts = 0;
-    health_ping_retries = 0;
-
     portENTER_CRITICAL(&health_mux);
     health_ping_replies++;
     portEXIT_CRITICAL(&health_mux);
 
-    // optionally, get callback arguments
-    // const char* str = (const char*) args;
-    // printf("%s\r\n", str); // "foo"
+    health_ping_timeouts = 0;
+    health_ping_retries = 0;
+
     uint8_t ttl;
     uint16_t seqno;
     uint32_t elapsed_time, recv_len;
@@ -127,8 +122,11 @@ static void health_ping_timeout(esp_ping_handle_t hdl, void *args)
     esp_ping_get_profile(hdl, ESP_PING_PROF_IPADDR, &target_addr, sizeof(target_addr));
     ESP_LOGI(TAG, "Ping timeout from %s icmp_seq=%d", inet_ntoa(target_addr.addr), seqno);
 
-    health_ping_timeouts++;
+    portENTER_CRITICAL(&health_mux);
     health_ping_replies++;
+    portEXIT_CRITICAL(&health_mux);
+
+    health_ping_timeouts++;
     if (health_ping_timeouts == HEALTH_PING_MAX_TIMEOUTS)
     {
         health_ping_retries++;
