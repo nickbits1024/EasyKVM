@@ -50,7 +50,7 @@ esp_err_t wifi_init()
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 
-    xTaskCreate(wifi_task, "wifi", 4096, NULL, 1, NULL);
+    xTaskCreate(wifi_task, "wifi", 4000, NULL, 1, NULL);
 
     return ESP_OK;
 }

@@ -80,8 +80,8 @@ esp_err_t usb_init()
     };
     ESP_ERROR_CHECK(usb_host_install(&host_config));
 
-    xTaskCreate(usb_host_lib_task, "usb_host_lib_task", 4096, NULL, 1, NULL);
-    xTaskCreate(usb_oc_check_task, "usb_oc_check_task", 4096, NULL, 1, NULL);
+    xTaskCreate(usb_host_lib_task, "usb_host_lib_task", 4000, NULL, 1, NULL);
+    xTaskCreate(usb_oc_check_task, "usb_oc_check_task", 4000, NULL, 1, NULL);
 
     return ESP_OK;
 }

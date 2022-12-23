@@ -63,6 +63,7 @@ esp_err_t health_start()
 
     esp_ping_config_t ping_config = ESP_PING_DEFAULT_CONFIG();
     ping_config.target_addr = target_addr;
+    ping_config.task_stack_size = 4000;
     ping_config.count = HEALTH_PING_COUNT;
     ping_config.interval_ms = HEALTH_PING_INTERVAL;
 
