@@ -4,6 +4,7 @@
 #include "freertos/semphr.h"
 #include "esp_log.h"
 #include "esp_check.h"
+#include "esp_timer.h"
 #include "nvs_flash.h"
 #include "usb/usb_host.h"
 #include "usb/usb_types_ch9.h"

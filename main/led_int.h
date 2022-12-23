@@ -1,3 +1,3 @@
-#define LED_GPIO_SEL        GPIO_SEL_48
-#define LED_GPIO_NUM        GPIO_NUM_48
-#define LED_CHANNEL         0
+#define LED_GPIO_NUM        (48)
+#define LED_GPIO_SEL        (1ull << LED_GPIO_NUM)
+#define LED_CHANNEL         (0)

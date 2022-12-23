@@ -14,6 +14,16 @@ static void usb_host_lib_task(void* arg);
 
 static void usb_host_lib_task(void* arg)
 {
+    SemaphoreHandle_t signaling_sem = (SemaphoreHandle_t)arg;
+
+    usb_host_config_t host_config = {
+        .skip_phy_setup = false,
+        .intr_flags = ESP_INTR_FLAG_LEVEL1,
+    };
+    ESP_ERROR_CHECK(usb_host_install(&host_config));
+
+    xSemaphoreGive(signaling_sem);
+
     for (;;)
     {
         ESP_ERROR_CHECK(usb_host_lib_handle_events(portMAX_DELAY, NULL));
@@ -74,14 +84,14 @@ esp_err_t usb_preinit()
 
 esp_err_t usb_init()
 {
-    usb_host_config_t host_config = {
-        .skip_phy_setup = false,
-        .intr_flags = ESP_INTR_FLAG_LEVEL1,
-    };
-    ESP_ERROR_CHECK(usb_host_install(&host_config));
+    SemaphoreHandle_t signaling_sem = xSemaphoreCreateBinary();
 
-    xTaskCreate(usb_host_lib_task, "usb_host_lib_task", 4000, NULL, 1, NULL);
+    xTaskCreate(usb_host_lib_task, "usb_host_lib_task", 4000, (void*)signaling_sem, 1, NULL);
     xTaskCreate(usb_oc_check_task, "usb_oc_check_task", 4000, NULL, 1, NULL);
+
+    xSemaphoreTake(signaling_sem, portMAX_DELAY);
+
+    vSemaphoreDelete(signaling_sem);
 
     return ESP_OK;
 }

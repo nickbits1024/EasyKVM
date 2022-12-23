@@ -201,7 +201,7 @@ static void wifi_task(void* param)
 
 static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data)
 {
-    ESP_LOGI(TAG, "event (%s).%d", event_base, event_id);
+    ESP_LOGI(TAG, "event (%s).%ld", event_base, event_id);
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
     {
         esp_wifi_connect();

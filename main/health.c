@@ -4,6 +4,7 @@
 #include "esp_log.h"
 #include "esp_wifi.h"
 #include "esp_check.h"
+#include "esp_timer.h"
 #include "lwip/inet.h"
 #include "ping/ping_sock.h"
 #include "health_int.h"
@@ -111,7 +112,7 @@ static void health_ping_success(esp_ping_handle_t hdl, void *args)
     esp_ping_get_profile(hdl, ESP_PING_PROF_IPADDR, &target_addr, sizeof(target_addr));
     esp_ping_get_profile(hdl, ESP_PING_PROF_SIZE, &recv_len, sizeof(recv_len));
     esp_ping_get_profile(hdl, ESP_PING_PROF_TIMEGAP, &elapsed_time, sizeof(elapsed_time));
-    ESP_LOGI(TAG, "Ping reply from %s: seq=%d bytes=%d time=%dms TTL=%d",
+    ESP_LOGI(TAG, "Ping reply from %s: seq=%u bytes=%lu time=%lums TTL=%u",
            inet_ntoa(target_addr.addr), seqno, recv_len, elapsed_time, ttl);
 }
 
@@ -154,7 +155,7 @@ static void health_ping_end(esp_ping_handle_t hdl, void *args)
     esp_ping_get_profile(hdl, ESP_PING_PROF_REQUEST, &transmitted, sizeof(transmitted));
     esp_ping_get_profile(hdl, ESP_PING_PROF_REPLY, &received, sizeof(received));
     esp_ping_get_profile(hdl, ESP_PING_PROF_DURATION, &total_time_ms, sizeof(total_time_ms));
-    ESP_LOGI(TAG, "Ping ended transmitted=%d received=%d time=%dms\n", transmitted, received, total_time_ms);
+    ESP_LOGI(TAG, "Ping ended transmitted=%lu received=%lu time=%lums\n", transmitted, received, total_time_ms);
 
     ESP_ERROR_CHECK(esp_ping_start(health_ping_handle));
 }

@@ -1,6 +1,7 @@
 #include "freertos/FreeRTOS.h"
 #include "esp_log.h"
 #include "driver/gpio.h"
+#include "rom/ets_sys.h"
 #include "led_strip.h"
 #include "led_int.h"
 #include "led.h"

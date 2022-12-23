@@ -9,6 +9,7 @@
 #include "usb/usb_helpers.h"
 #include "driver/i2c.h"
 #include "driver/periph_ctrl.h"
+#include "rom/ets_sys.h"
 #include "ddc_int.h"
 #include "ddc.h"
 
