@@ -2,7 +2,7 @@
 
 ## About Easy KVM
 
-Easy KVM is a Wi-Fi enabled hybrid KVM.  It acts a an USB sharing switch and VESA DDC/CI based switcher.  It does not touch the video signal which eliminates a lot of issues found with standard KVMs.
+Easy KVM is a Wi-Fi enabled hybrid KVM.  It acts a an USB sharing switch and VESA DDC/CI switcher.  It does not touch the video signal which eliminates a lot of issues found with standard KVMs.
 
 ![Final Project](docs/final_project.jpg)
 ![PCB](docs/pcb.jpg)
@@ -18,7 +18,7 @@ Easy KVM is a Wi-Fi enabled hybrid KVM.  It acts a an USB sharing switch and VES
 * Integrated with Home Assistant
 
 ## External Requirements
-* USB macro keypad e.g. [Amazon](https://www.amazon.com/gp/product/B09CKT8B7) [AliExpress](https://www.aliexpress.us/item/3256804248423460.html)
+* USB macro keypad e.g. [Amazon](https://www.amazon.com/gp/product/B09CKT8B7Y) [AliExpress](https://www.aliexpress.us/item/3256804248423460.html)
 * USB 2.0 high speed hub e.g. [Amazon](https://www.amazon.com/gp/product/B005A0B3FG)
 * Monitor with an HDMI port that supports VESA DDC/CI
 
