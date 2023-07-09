@@ -11,6 +11,7 @@ void kvm_sync_port();
 void kvm_set_port(int port);
 int kvm_get_port();
 void kvm_enable(bool enable);
+void kvm_usb_reset(bool reset);
 esp_err_t kvm_load_state();
 
 #endif

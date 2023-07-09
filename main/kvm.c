@@ -61,7 +61,8 @@ void kvm_sync_port()
 
     ESP_ERROR_CHECK(led_set_rgb_color(255, 0, 0));
 
-    kvm_enable(false);
+    //kvm_enable(false);
+    kvm_usb_reset(true);
 
     config_t* config = (config_t*)malloc(sizeof(config_t));
     if (config == NULL)
@@ -109,9 +110,10 @@ void kvm_sync_port()
         kvm_state.last_input = input;
         kvm_save_state();
     }
-    kvm_enable(true);
+    //kvm_enable(true);
 
     vTaskDelay(500 / portTICK_PERIOD_MS);
+    kvm_usb_reset(false);
 
     ESP_ERROR_CHECK(led_set_rgb_color(r, g, b));
 }
@@ -130,17 +132,35 @@ esp_err_t kvm_preinit()
 
     //ESP_ERROR_CHECK(gpio_set_level(KVM_PORT_GPIO_NUM, 1));
 
+    io_conf.pin_bit_mask = KVM_HUB_DN_GPIO_SEL | KVM_HUB_DP_GPIO_SEL;
+    io_conf.mode = GPIO_MODE_OUTPUT_OD;
+    io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
+    io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+
+    ESP_ERROR_CHECK(gpio_config(&io_conf));
+
+    kvm_usb_reset(false);
+
     return ESP_OK;
+}
+
+void kvm_usb_reset(bool reset)
+{
+    gpio_set_level(KVM_HUB_DN_GPIO_NUM, reset ? 0 : 1);
+    gpio_set_level(KVM_HUB_DP_GPIO_NUM, reset ? 0 : 1);
 }
 
 void kvm_reset()
 {
+    ESP_ERROR_CHECK(led_set_rgb_color(255, 0, 0));
     usb_enable2(false);
-    kvm_enable(false);
-    //usb_reset();
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    //kvm_enable(false);
+    kvm_usb_reset(true);
+
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
     usb_enable2(true);
-    kvm_enable(true);
+    //kvm_enable(true);
     kvm_sync_port();
 }
 
@@ -207,9 +227,10 @@ esp_err_t kvm_init()
     ESP_RETURN_ON_ERROR(esp_timer_create(&check_timer, &check_timer_handle),
         TAG, "esp_timer_create failed(%s)", esp_err_to_name(err_rc_));
 
-    kvm_sync_port();
-
     usb_enable2(true);
+    kvm_enable(true);
+
+    kvm_sync_port();
 
     return ESP_OK;
 }

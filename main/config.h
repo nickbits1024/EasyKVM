@@ -1,4 +1,4 @@
-#ifndef CONFIG_H_
+#ifndef CONFIG_H
 #define CONFIG_H
 
 #define NUM_BUTTONS                     5
