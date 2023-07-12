@@ -110,10 +110,10 @@ void kvm_sync_port()
         kvm_state.last_input = input;
         kvm_save_state();
     }
-    //kvm_enable(true);
 
     vTaskDelay(500 / portTICK_PERIOD_MS);
     kvm_usb_reset(false);
+    //kvm_enable(true);
 
     ESP_ERROR_CHECK(led_set_rgb_color(r, g, b));
 }
